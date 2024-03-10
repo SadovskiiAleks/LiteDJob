@@ -12,30 +12,17 @@ import java.util.List;
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
-    //List<Request> findAllByStatus(Status status);
-
     Page<Request> findAllByStatus(Status status, PageRequest page);
 
+    Page<Request> findAllByStatusNotLike(Status status, PageRequest page);
 
-    Page<Request> findAllByStatusAndUserRoleUsernameContaining(Status status,String userName, PageRequest page);
+    Page<Request> findAllByStatusNotLikeAndUserRoleUsernameContaining(Status status, String userName, PageRequest page);
 
-    //List<Request> findAllByUserRoleUsername(String name);
-
-    //List<Request> findAllByUserRoleId(Long id);
-
-    //List<Request> findAllByUserRoleId(Long id, Sort sort);
+    Page<Request> findAllByStatusAndUserRoleUsernameContaining(Status status, String userName, PageRequest page);
 
     Page<Request> findAllByUserRoleId(Long id, PageRequest page);
 
-    List<Request> findAllByStatusOrStatusOrStatus(Status status1, Status status2, Status status3);
-
-//    //@Query("select e from Request r left join UserRole u on r.userRole = u.id  where (r.status = 'SEND' or r.status ='DRAFT') and u.id = 1 ORDER BY r.created desc" )
-//    List<Request> findAllByFilter();
-
-
-
-//    @Query("select r from  Request r  join UserRole u on r.userRole = u.id where u.name = :name")
-//    List<Request> joinFruit(@Param("name") String name, );
-
-    List<Request> findAllByUserRoleUsernameAndStatusOrStatusOrStatus(String name, Status status1, Status status2, Status status3);
+//    List<Request> findAllByStatusOrStatusOrStatus(Status status1, Status status2, Status status3);
+//
+//    List<Request> findAllByUserRoleUsernameAndStatusOrStatusOrStatus(String name, Status status1, Status status2, Status status3);
 }

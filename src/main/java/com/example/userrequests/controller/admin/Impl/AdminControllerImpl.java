@@ -4,14 +4,12 @@ import com.example.userrequests.controller.admin.AdminController;
 import com.example.userrequests.model.request.Request;
 import com.example.userrequests.model.request.UserRole;
 import com.example.userrequests.model.role.Role;
-import com.example.userrequests.repository.userRepository.UserRepository;
 import com.example.userrequests.service.adminService.AdminService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -26,19 +24,19 @@ public class AdminControllerImpl implements AdminController {
         return adminService.getAllUsers();
     }
 
+//    @Override
+//    public ResponseEntity<List<UserRole>> getUsersByName(String name) {
+//        return adminService.getUsersByName(name);
+//    }
+
     @Override
-    public ResponseEntity<List<UserRole>> getUsersByName(String name) {
-        return adminService.getUsersByName(name);
+    public ResponseEntity<Page<Request>> getAllRequest(String sort, Long page) {
+        return adminService.getAllRequest(sort, page);
     }
 
     @Override
-    public ResponseEntity<List<Request>> getAllRequest() {
-        return adminService.getAllRequest();
-    }
-
-    @Override
-    public ResponseEntity<List<Request>> getRequestByName(String name) {
-        return adminService.getRequestByName(name);
+    public ResponseEntity<Page<Request>> getRequestByName(String sort, Long page, String name) {
+        return adminService.getRequestByName(sort, page, name);
     }
 
     @Override

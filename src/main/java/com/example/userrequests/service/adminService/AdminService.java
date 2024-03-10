@@ -4,6 +4,7 @@ import com.example.userrequests.model.request.Request;
 import com.example.userrequests.model.request.UserRole;
 import com.example.userrequests.model.role.Role;
 import com.example.userrequests.repository.userRepository.UserRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,11 @@ import java.util.List;
 public interface AdminService {
     ResponseEntity<List<UserRole>> getAllUsers();
 
-    ResponseEntity<List<UserRole>> getUsersByName(String name);
+//    ResponseEntity<List<UserRole>> getUsersByName(String name);
 
-    ResponseEntity<List<Request>> getAllRequest();
+    ResponseEntity<Page<Request>> getAllRequest(String sort, Long page);
 
-    ResponseEntity<List<Request>> getRequestByName(String name);
+    ResponseEntity<Page<Request>> getRequestByName(String sort, Long page, String name);
 
     ResponseEntity<UserRole> setRoleUser(long id, Role status);
 }

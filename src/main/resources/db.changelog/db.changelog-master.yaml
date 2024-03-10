@@ -1,7 +1,7 @@
 #databaseChangeLog:
 #  - include:
-#      file: migration/schema_1.sql
+#      file: migration/schema.sql
 #      relativeToChangelogFile: true
 #  - include:
-#      file: migration/data_1.sql
+#      file: migration/data.sql
 #      relativeToChangelogFile: true
