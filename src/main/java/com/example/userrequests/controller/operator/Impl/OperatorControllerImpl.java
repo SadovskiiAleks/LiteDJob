@@ -5,11 +5,10 @@ import com.example.userrequests.model.request.Request;
 import com.example.userrequests.model.status.Status;
 import com.example.userrequests.service.operatorService.OperatorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,8 +19,8 @@ public class OperatorControllerImpl implements OperatorController {
     private final OperatorService operatorService;
 
     @Override
-    public ResponseEntity<List<Request>> getAllRequest() {
-        return operatorService.getAllRequest();
+    public ResponseEntity<Page<Request>> getAllRequest(String sort, Long page) {
+        return operatorService.getAllRequest(sort, page);
     }
 
     @Override
@@ -30,8 +29,8 @@ public class OperatorControllerImpl implements OperatorController {
     }
 
     @Override
-    public ResponseEntity<List<Request>> getRequestByName(String name) {
-        return operatorService.getRequestByName(name);
+    public ResponseEntity<Page<Request>> getRequestByName(String sort, Long page, String name) {
+        return operatorService.getRequestByName(sort, page, name);
     }
 
     @Override

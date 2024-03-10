@@ -1,82 +1,139 @@
 package com.example.userrequests.service.userService.impl;
 
 import com.example.userrequests.model.request.Request;
+import com.example.userrequests.model.request.UserRole;
 import com.example.userrequests.model.status.Status;
 import com.example.userrequests.repository.requestRepository.RequestRepository;
+import com.example.userrequests.repository.userRepository.UserRepository;
+import com.example.userrequests.service.securityService.JwtService;
 import com.example.userrequests.service.userService.UserService;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
+    public static final String BEARER_PREFIX = "Bearer ";
 
     private final RequestRepository requestRepository;
+    private final UserRepository userRepository;
+    private final JwtService jwtService;
 
     @Override
-    public ResponseEntity<Request> createNewRequest(Request request) {
-        request.setStatus(Status.SEND);
-
-
-        Request newRequest = requestRepository.save(request);
-        return new ResponseEntity<>(newRequest, HttpStatus.CREATED);
-    }
-
-    @Override
-    public ResponseEntity<Request> createNewDraft(Request request) {
-        request.setStatus(Status.DRAFT);
-        Request newRequest = requestRepository.save(request);
-        return new ResponseEntity<>(newRequest, HttpStatus.CREATED);
-    }
-
-    @Override
-    public ResponseEntity<String> sendRequest(long id) {
-        Optional<Request> optionalRequest = requestRepository.findById(id);
-        //check request
-        Request request = optionalRequest.get();
-        if (request.getStatus().equals(Status.DRAFT)) {
+    public ResponseEntity<Request> createNewRequest(Request request, String authentication) {
+        String token = authentication.substring(BEARER_PREFIX.length());
+        Long userId = jwtService.getUserId(token);
+        Optional<UserRole> userRoleOptional = userRepository.findById(userId);
+        if (userRoleOptional.isPresent()) {
+            UserRole userRole = userRoleOptional.get();
+            request.setCreated(new Date());
+            request.setUserRole(userRole);
             request.setStatus(Status.SEND);
-            requestRepository.save(request);
-            return ResponseEntity.ok().build();
+            Request newRequest = requestRepository.save(request);
+            return new ResponseEntity<>(newRequest, HttpStatus.CREATED);
         } else {
-            // add body
-            return ResponseEntity.badRequest().build();
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public ResponseEntity<String> editDraft(long id, Request request) {
+    public ResponseEntity<Request> createNewDraft(Request request, String authentication) {
+        String token = authentication.substring(BEARER_PREFIX.length());
+        Long userId = jwtService.getUserId(token);
+        Optional<UserRole> userRoleOptional = userRepository.findById(userId);
+        if (userRoleOptional.isPresent()) {
+            UserRole userRole = userRoleOptional.get();
+            if (userRole != null) {
+                request.setCreated(new Date());
+                request.setUserRole(userRole);
+                request.setStatus(Status.DRAFT);
+                Request newRequest = requestRepository.save(request);
+                return new ResponseEntity<>(newRequest, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public ResponseEntity<String> sendRequest(long id, String authentication) {
+        String token = authentication.substring(BEARER_PREFIX.length());
+        Long userId = jwtService.getUserId(token);
         Optional<Request> optionalRequest = requestRepository.findById(id);
-        //check request
-        Request requestOfRepository = optionalRequest.get();
-        if (requestOfRepository.getStatus().equals(Status.DRAFT)) {
-//            requestOfRepository. Заполнить все поля с request
-            requestOfRepository.setFullText(request.getFullText());
-            requestRepository.save(requestOfRepository);
-            return ResponseEntity.ok().build();
-        } else {
-            // add body
-            return ResponseEntity.badRequest().build();
+        if (optionalRequest.isPresent()) {
+            Request request = optionalRequest.get();
+            if (request != null && request.getStatus().equals(Status.DRAFT) && request.getUserRole().getId().equals(userId)) {
+                request.setStatus(Status.SEND);
+                requestRepository.save(request);
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
         }
-
+        return ResponseEntity.notFound().build();
     }
 
     @Override
-    public ResponseEntity<List<Request>> getAllRequest() {
-        List<Request> arrayList = requestRepository.findAll();
-        return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
+    public ResponseEntity<String> editDraft(long id, Request request, String authentication) {
+        String token = authentication.substring(BEARER_PREFIX.length());
+        Long userId = jwtService.getUserId(token);
+        Optional<Request> optionalRequest = requestRepository.findById(id);
+        if (optionalRequest.isPresent()) {
+            Request requestOfRepository = optionalRequest.get();
+            if (requestOfRepository.getStatus().equals(Status.DRAFT) && requestOfRepository.getUserRole().getId().equals(userId)) {
+                requestOfRepository.setFullText(request.getFullText());
+                requestRepository.save(requestOfRepository);
+                return ResponseEntity.ok().build();
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        }
+        return ResponseEntity.notFound().build();
     }
 
     @Override
-    public ResponseEntity<List<Request>> getAllRequest(String filter) {
-        //добавить фильтр
-        List<Request> arrayList = requestRepository.findAll();
-        return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
+    public ResponseEntity<Page<Request>> getAllRequest(String authentication, String sort, Long page) {
+        page = page - 1;
+        String token = authentication.substring(BEARER_PREFIX.length());
+        Long userId = jwtService.getUserId(token);
+        Optional<UserRole> userRoleOptional = userRepository.findById(userId);
+        if (userRoleOptional.isPresent()) {
+            UserRole userRole = userRoleOptional.get();
+            if (sort.equals("asc")) {
+                Sort sortSQL = Sort.by(Sort.Order.asc("created"));
+                PageRequest pageRequest = PageRequest.of(page.intValue(), 5, sortSQL);
+                Page<Request> arrayList = requestRepository.findAllByUserRoleId(userRole.getId(), pageRequest);
+                return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
+            }
+            if ((sort.equals("desc"))) {
+                Sort sortSQL = Sort.by(Sort.Order.desc("created"));
+                PageRequest pageRequest = PageRequest.of(page.intValue(), 5, sortSQL);
+                Page<Request> arrayList = requestRepository.findAllByUserRoleId(userRole.getId(), pageRequest);
+                return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
     }
+
+//
+//    @Override
+//    public ResponseEntity<List<Request>> getAllRequest(String filter, String authentication) {
+//        //добавить фильтр
+//        List<Request> arrayList = requestRepository.findAll();
+//        return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
+//    }
 }

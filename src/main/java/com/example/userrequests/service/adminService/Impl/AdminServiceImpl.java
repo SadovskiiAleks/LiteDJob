@@ -33,7 +33,8 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResponseEntity<List<UserRole>> getUsersByName(String name) {
-        List<UserRole> arrayList = userRepository.findByName(name);
+        Optional<UserRole> optionalUserRole = userRepository.findByUsername(name);
+        List<UserRole> arrayList = optionalUserRole.stream().toList();
         return new ResponseEntity<>(arrayList, HttpStatus.CREATED);
     }
 
@@ -45,7 +46,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResponseEntity<List<Request>> getRequestByName(String name) {
-        List<Request> arrayList = requestRepository.findAllByUserRoleNameAndStatusOrStatusOrStatus(name,Status.DRAFT,Status.DISMISS,Status.ACCEPT);
+        List<Request> arrayList = requestRepository.findAllByUserRoleUsernameAndStatusOrStatusOrStatus(name,Status.DRAFT,Status.DISMISS,Status.ACCEPT);
         return new ResponseEntity<>(arrayList, HttpStatus.CREATED);
     }
 
