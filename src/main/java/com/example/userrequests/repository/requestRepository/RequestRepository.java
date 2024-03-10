@@ -3,23 +3,26 @@ package com.example.userrequests.repository.requestRepository;
 import com.example.userrequests.model.request.Request;
 import com.example.userrequests.model.role.Role;
 import com.example.userrequests.model.status.Status;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 
-public interface RequestRepository {
-    Request getRequest(long id);
+import java.util.List;
 
-    ArrayList<Request> getByName(String name);
+@Repository
+public interface RequestRepository extends JpaRepository<Request,Long> {
 
-    Request getByID(long id);
+    List<Request> findAllByStatus(Status status);
+    List<Request> findAllByUserRoleName(String name);
+    List<Request> findAllByStatusOrStatusOrStatus(Status status1,Status status2, Status status3);
 
-    ArrayList<Request> getAll();
+//    @Query("select r from  Request r  join UserRole u on r.userRole = u.id where u.name = :name")
+//    List<Request> joinFruit(@Param("name") String name, );
 
-    ArrayList<Request> getAll(Role role);
+    List<Request> findAllByUserRoleNameAndStatusOrStatusOrStatus(String name, Status status1, Status status2,Status status3);
 
-    void save(Request request);
 
-    Request createNewRequest(Request request);
 
-    ArrayList<Request> getAllWithFilter(Role admin, String name);
 }

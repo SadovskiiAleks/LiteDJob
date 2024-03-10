@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public interface UserService {
@@ -15,8 +16,8 @@ public interface UserService {
 
     ResponseEntity<String> editDraft(long id, Request request);
 
-    ResponseEntity<ArrayList<Request>> getAllRequest();
-    ResponseEntity<ArrayList<Request>> getAllRequest(String filter);
+    ResponseEntity<List<Request>> getAllRequest();
+    ResponseEntity<List<Request>> getAllRequest(String filter);
 
 
 }

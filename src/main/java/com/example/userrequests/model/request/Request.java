@@ -1,12 +1,33 @@
 package com.example.userrequests.model.request;
 
 import com.example.userrequests.model.status.Status;
+import jakarta.persistence.*;
+import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 
-public interface Request {
-    long getID();
-    boolean setStatus(Status status);
+import java.util.Date;
 
-    Status getStatus();
+@Entity
+@Table(name = "request")
+@Data
+public class Request {
 
-    void setID(long id);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @CreatedDate
+    @Column(name = "created")
+    private Date created;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private Status status;
+
+    @Column(name = "fullText")
+    private String fullText;
+
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    private UserRole userRole;
 }

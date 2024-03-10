@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
 public class UserControllerImpl implements UserController {
     private final UserService userService;
 
@@ -37,14 +37,13 @@ public class UserControllerImpl implements UserController {
     }
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getAllRequest() {
+    public ResponseEntity<List<Request>> getAllRequest() {
         return userService.getAllRequest();
     }
 
     @Override
-    public ResponseEntity<String> getAllRequestFilter() {
-        String filter=new String();
-        userService.getAllRequest( filter);
-         return ResponseEntity.badRequest().build();
+    public ResponseEntity<List<Request>> getAllRequestFilter(String filter) {
+        userService.getAllRequest(filter);
+        return ResponseEntity.badRequest().build();
     }
 }

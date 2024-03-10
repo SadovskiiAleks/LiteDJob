@@ -5,29 +5,26 @@ import com.example.userrequests.model.request.UserRole;
 import com.example.userrequests.model.role.Role;
 import com.example.userrequests.repository.userRepository.UserRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
+@RestController
+@RequestMapping("/admin")
 public interface AdminController {
-//    смотреть список пользователей
-//• смотреть заявки в статусе отправлено, принято, отклонено. Пагинация 5 элементов, сортировка по дате. Фильтрация по имени.
-//• назначать пользователям права оператора
 
     @GetMapping("/users")
-    ResponseEntity<ArrayList<UserRepository>> getAllUsers();
+    ResponseEntity<List<UserRole>> getAllUsers();
 
     @GetMapping("/users/filter")
-    ResponseEntity<ArrayList<UserRepository>> getUsersByName(@RequestBody String name);
+    ResponseEntity<List<UserRole>> getUsersByName(@RequestBody String name);
 
     @GetMapping("/request")
-    ResponseEntity<ArrayList<Request>> getAllRequest();
+    ResponseEntity<List<Request>> getAllRequest();
 
     @GetMapping("/request/filter")
-    ResponseEntity<ArrayList<Request>> getRequestByName(@RequestBody String name);
+    ResponseEntity<List<Request>> getRequestByName(@RequestBody String name);
 
     @PutMapping("/users/{id}")
     ResponseEntity<UserRole> setRoleUser(@PathVariable(value = "id") long id, @RequestBody Role role);

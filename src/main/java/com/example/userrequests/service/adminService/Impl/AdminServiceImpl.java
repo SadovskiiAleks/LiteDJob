@@ -10,45 +10,50 @@ import com.example.userrequests.service.adminService.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
+@Service
 public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
 
     @Override
-    public ResponseEntity<ArrayList<UserRepository>> getAllUsers() {
-        ArrayList<UserRepository> arrayList = userRepository.getAll();
+    public ResponseEntity<List<UserRole>> getAllUsers() {
+        List<UserRole> list = userRepository.findAll();
+        ArrayList<UserRole> arrayList = new ArrayList<>();
+        arrayList.addAll(list);
         return new ResponseEntity<>(arrayList, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<ArrayList<UserRepository>> getUsersByName(String name) {
-        ArrayList<UserRepository> arrayList = userRepository.getByName(name);
+    public ResponseEntity<List<UserRole>> getUsersByName(String name) {
+        List<UserRole> arrayList = userRepository.findByName(name);
         return new ResponseEntity<>(arrayList, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getAllRequest() {
-        ArrayList<Request> arrayList = requestRepository.getAll(Role.ADMIN);
+    public ResponseEntity<List<Request>> getAllRequest() {
+        List<Request> arrayList = requestRepository.findAllByStatusOrStatusOrStatus(Status.SEND,Status.ACCEPT,Status.DISMISS);
         return new ResponseEntity<>(arrayList, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getRequestByName(String name) {
-        ArrayList<Request> arrayList = requestRepository.getAllWithFilter(Role.ADMIN, name);
+    public ResponseEntity<List<Request>> getRequestByName(String name) {
+        List<Request> arrayList = requestRepository.findAllByUserRoleNameAndStatusOrStatusOrStatus(name,Status.DRAFT,Status.DISMISS,Status.ACCEPT);
         return new ResponseEntity<>(arrayList, HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<UserRole> setRoleUser(long id, Role role) {
-        UserRole user = userRepository.getUser(id);
-        user.setRoleUser(role);
-        userRepository.save(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
-
+        Optional<UserRole> optionalUserRole = userRepository.findById(id);
+        UserRole user = optionalUserRole.get();
+        user.setRole(role);
+        return new ResponseEntity<>(userRepository.save(user), HttpStatus.CREATED);
     }
 }

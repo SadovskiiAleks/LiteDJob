@@ -7,9 +7,13 @@ import com.example.userrequests.service.userService.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+@Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
@@ -18,21 +22,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<Request> createNewRequest(Request request) {
         request.setStatus(Status.SEND);
-        Request newRequest = requestRepository.createNewRequest(request);
+
+
+        Request newRequest = requestRepository.save(request);
         return new ResponseEntity<>(newRequest, HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<Request> createNewDraft(Request request) {
         request.setStatus(Status.DRAFT);
-        Request newRequest = requestRepository.createNewRequest(request);
+        Request newRequest = requestRepository.save(request);
         return new ResponseEntity<>(newRequest, HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<String> sendRequest(long id) {
-        //прописать логику
-        Request request = requestRepository.getRequest(id);
+        Optional<Request> optionalRequest = requestRepository.findById(id);
+        //check request
+        Request request = optionalRequest.get();
         if (request.getStatus().equals(Status.DRAFT)) {
             request.setStatus(Status.SEND);
             requestRepository.save(request);
@@ -45,11 +52,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<String> editDraft(long id, Request request) {
-        Request requestOfRepository = requestRepository.getRequest(id);
-
+        Optional<Request> optionalRequest = requestRepository.findById(id);
+        //check request
+        Request requestOfRepository = optionalRequest.get();
         if (requestOfRepository.getStatus().equals(Status.DRAFT)) {
 //            requestOfRepository. Заполнить все поля с request
-            requestRepository.save(request);
+            requestOfRepository.setFullText(request.getFullText());
+            requestRepository.save(requestOfRepository);
             return ResponseEntity.ok().build();
         } else {
             // add body
@@ -59,15 +68,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getAllRequest() {
-        ArrayList<Request> arrayList = requestRepository.getAll();
+    public ResponseEntity<List<Request>> getAllRequest() {
+        List<Request> arrayList = requestRepository.findAll();
         return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
     }
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getAllRequest(String filter) {
+    public ResponseEntity<List<Request>> getAllRequest(String filter) {
         //добавить фильтр
-        ArrayList<Request> arrayList = requestRepository.getAll();
+        List<Request> arrayList = requestRepository.findAll();
         return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
     }
 }

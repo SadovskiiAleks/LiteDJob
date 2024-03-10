@@ -10,27 +10,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+
 public class OperatorControllerImpl implements OperatorController {
 
     private final OperatorService operatorService;
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getAllRequest() {
-        return operatorService.showAllRequest();
+    public ResponseEntity<List<Request>> getAllRequest() {
+        return operatorService.getAllRequest();
     }
 
     @Override
     public ResponseEntity<Request> getRequestByID(long id) {
-        return operatorService.showRequestByID(id);
+        return operatorService.getRequestByID(id);
     }
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getRequestByName(Status name) {
-        return operatorService.showRequestByFilter(name);
+    public ResponseEntity<List<Request>> getRequestByName(String name) {
+        return operatorService.getRequestByName(name);
     }
 
     @Override

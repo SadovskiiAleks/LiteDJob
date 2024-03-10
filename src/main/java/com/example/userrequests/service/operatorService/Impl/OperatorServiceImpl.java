@@ -8,36 +8,42 @@ import com.example.userrequests.service.operatorService.OperatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
+@Service
 @RequiredArgsConstructor
-public class OperatorImpl implements OperatorService {
+public class OperatorServiceImpl implements OperatorService {
 
     private final RequestRepository requestRepository;
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getAllRequest() {
-        ArrayList<Request> arrayList = requestRepository.getAll(Role.OPERATOR);
+    public ResponseEntity<List<Request>> getAllRequest() {
+        List<Request> arrayList = requestRepository.findAllByStatus(Status.SEND);
         return new ResponseEntity<>(arrayList, HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<Request> getRequestByID(long id) {
         //add check
-        Request arrayList = requestRepository.getByID(id);
-        return new ResponseEntity<>(arrayList, HttpStatus.CREATED);
+        Optional<Request> optionalRequest = requestRepository.findById(id);
+        Request requestOfRepository = optionalRequest.get();
+        return new ResponseEntity<>(requestOfRepository, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getRequestByName(String name) {
-        ArrayList<Request> arrayList = requestRepository.getByName(name);
+    public ResponseEntity<List<Request>> getRequestByName(String name) {
+        System.out.println(name);
+        List<Request> arrayList = requestRepository.findAllByUserRoleName(name);
         return new ResponseEntity<>(arrayList, HttpStatus.CREATED);
     }
 
     @Override
     public ResponseEntity<String> setStage(long id, Status status) {
-        Request requestOfRepository = requestRepository.getRequest(id);
+        Optional<Request> optionalRequest = requestRepository.findById(id);
+        Request requestOfRepository = optionalRequest.get();
         if (requestOfRepository.getStatus().equals(Status.SEND)) {
             requestOfRepository.setStatus(status);
             requestRepository.save(requestOfRepository);

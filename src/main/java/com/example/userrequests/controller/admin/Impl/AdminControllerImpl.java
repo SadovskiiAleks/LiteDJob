@@ -12,31 +12,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+
 public class AdminControllerImpl implements AdminController {
 
     private final AdminService adminService;
 
     @Override
-    public ResponseEntity<ArrayList<UserRepository>> getAllUsers() {
+    public ResponseEntity<List<UserRole>> getAllUsers() {
         return adminService.getAllUsers();
     }
 
     @Override
-    public ResponseEntity<ArrayList<UserRepository>> getUsersByName(String name) {
+    public ResponseEntity<List<UserRole>> getUsersByName(String name) {
         return adminService.getUsersByName(name);
     }
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getAllRequest() {
+    public ResponseEntity<List<Request>> getAllRequest() {
         return adminService.getAllRequest();
     }
 
     @Override
-    public ResponseEntity<ArrayList<Request>> getRequestByName(String name) {
+    public ResponseEntity<List<Request>> getRequestByName(String name) {
         return adminService.getRequestByName(name);
     }
 
