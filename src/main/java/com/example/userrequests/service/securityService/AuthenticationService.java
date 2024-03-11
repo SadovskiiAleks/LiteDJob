@@ -36,11 +36,9 @@ public class AuthenticationService {
                 request.getUsername(),
                 request.getPassword()
         ));
-
         var user = userService
                 .userDetailsService()
                 .loadUserByUsername(request.getUsername());
-
         var jwt = jwtService.generateToken(user);
         return new JwtAuthenticationResponse(jwt);
     }

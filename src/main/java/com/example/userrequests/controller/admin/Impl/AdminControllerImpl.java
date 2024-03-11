@@ -24,11 +24,6 @@ public class AdminControllerImpl implements AdminController {
         return adminService.getAllUsers();
     }
 
-//    @Override
-//    public ResponseEntity<List<UserRole>> getUsersByName(String name) {
-//        return adminService.getUsersByName(name);
-//    }
-
     @Override
     public ResponseEntity<Page<Request>> getAllRequest(String sort, Long page) {
         return adminService.getAllRequest(sort, page);
