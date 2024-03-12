@@ -16,13 +16,9 @@ public interface RequestRepository extends JpaRepository<Request, Long> {
 
     Page<Request> findAllByStatusNotLike(Status status, PageRequest page);
 
-    Page<Request> findAllByStatusNotLikeAndUserRoleUsernameContaining(Status status, String userName, PageRequest page);
+    Page<Request> findAllByStatusNotLikeAndMyUserUsernameContaining(Status status, String userName, PageRequest page);
 
-    Page<Request> findAllByStatusAndUserRoleUsernameContaining(Status status, String userName, PageRequest page);
+    Page<Request> findAllByStatusAndMyUserUsernameContaining(Status status, String userName, PageRequest page);
 
-    Page<Request> findAllByUserRoleId(Long id, PageRequest page);
-
-//    List<Request> findAllByStatusOrStatusOrStatus(Status status1, Status status2, Status status3);
-//
-//    List<Request> findAllByUserRoleUsernameAndStatusOrStatusOrStatus(String name, Status status1, Status status2, Status status3);
+    Page<Request> findAllByMyUserId(Long id, PageRequest page);
 }

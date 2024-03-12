@@ -1,11 +1,12 @@
 package com.example.userrequests.securityConfig.filter;
 
-import com.example.userrequests.service.securityService.JwtService;
-import com.example.userrequests.service.securityService.UserService;
+import com.example.userrequests.securityConfig.securityService.JwtService;
+import com.example.userrequests.securityConfig.securityService.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import org.apache.commons.lang3.StringUtils;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

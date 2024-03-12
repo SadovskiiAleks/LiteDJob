@@ -2,7 +2,7 @@ package com.example.userrequests.controller.admin.Impl;
 
 import com.example.userrequests.controller.admin.AdminController;
 import com.example.userrequests.model.request.Request;
-import com.example.userrequests.model.request.UserRole;
+import com.example.userrequests.model.user.MyUser;
 import com.example.userrequests.model.role.Role;
 import com.example.userrequests.service.adminService.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class AdminControllerImpl implements AdminController {
     private final AdminService adminService;
 
     @Override
-    public ResponseEntity<List<UserRole>> getAllUsers() {
+    public ResponseEntity<List<MyUser>> getAllUsers() {
         return adminService.getAllUsers();
     }
 
@@ -35,7 +35,7 @@ public class AdminControllerImpl implements AdminController {
     }
 
     @Override
-    public ResponseEntity<UserRole> setRoleUser(long id, Role role) {
-        return adminService.setRoleUser(id, role);
+    public ResponseEntity<MyUser> setRoleUser(long id, long idRole) {
+        return adminService.setRoleUser(id, idRole);
     }
 }

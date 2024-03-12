@@ -1,11 +1,9 @@
-package com.example.userrequests.service.securityService;
+package com.example.userrequests.securityConfig.securityService;
 
-import com.example.userrequests.model.request.UserRole;
-import com.example.userrequests.model.role.Role;
+import com.example.userrequests.model.user.MyUser;
 import com.example.userrequests.repository.userRepository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -15,11 +13,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository repository;
 
-    public UserRole save(UserRole user) {
+    public MyUser save(MyUser user) {
         return repository.save(user);
     }
 
-    public UserRole create(UserRole user) {
+    public MyUser create(MyUser user) {
         if (repository.existsByUsername(user.getUsername())) {
             throw new RuntimeException("Пользователь с таким именем уже существует");
         }
@@ -31,7 +29,7 @@ public class UserService {
         return save(user);
     }
 
-    public UserRole getByUsername(String username) {
+    public MyUser getByUsername(String username) {
         return repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Пользователь не найден"));
     }
@@ -40,15 +38,9 @@ public class UserService {
         return this::getByUsername;
     }
 
-    public UserRole getCurrentUser() {
+
+    public MyUser getCurrentUser() {
         var username = SecurityContextHolder.getContext().getAuthentication().getName();
         return getByUsername(username);
     }
-
-//    @Deprecated
-//    public void getAdmin() {
-//        var user = getCurrentUser();
-//        user.setRole(Role.ADMIN);
-//        save(user);
-//    }
 }

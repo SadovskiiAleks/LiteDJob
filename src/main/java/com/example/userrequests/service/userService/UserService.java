@@ -1,6 +1,7 @@
 package com.example.userrequests.service.userService;
 
 import com.example.userrequests.model.request.Request;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Transactional
 public interface UserService {
     ResponseEntity<Request> createNewRequest(Request request, String authentication);
     ResponseEntity<Request> createNewDraft(Request request, String authentication);

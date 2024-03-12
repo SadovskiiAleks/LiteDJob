@@ -56,13 +56,13 @@ public class OperatorServiceImpl implements OperatorService {
         if (sort.equals("asc")) {
             Sort sortSQL = Sort.by(Sort.Order.asc("created"));
             PageRequest pageRequest = PageRequest.of(page.intValue(), 5, sortSQL);
-            Page<Request> arrayList = requestRepository.findAllByStatusAndUserRoleUsernameContaining(Status.SEND, name, pageRequest);
+            Page<Request> arrayList = requestRepository.findAllByStatusAndMyUserUsernameContaining(Status.SEND, name, pageRequest);
             return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
         }
         if ((sort.equals("desc"))) {
             Sort sortSQL = Sort.by(Sort.Order.desc("created"));
             PageRequest pageRequest = PageRequest.of(page.intValue(), 5, sortSQL);
-            Page<Request> arrayList = requestRepository.findAllByStatusAndUserRoleUsernameContaining(Status.SEND, name, pageRequest);
+            Page<Request> arrayList = requestRepository.findAllByStatusAndMyUserUsernameContaining(Status.SEND, name, pageRequest);
             return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

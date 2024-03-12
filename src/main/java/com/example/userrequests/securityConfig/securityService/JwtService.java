@@ -1,6 +1,6 @@
-package com.example.userrequests.service.securityService;
+package com.example.userrequests.securityConfig.securityService;
 
-import com.example.userrequests.model.request.UserRole;
+import com.example.userrequests.model.user.MyUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -21,7 +21,6 @@ import java.util.function.Function;
 public class JwtService {
     @Value("${token.signing.key}")
     private String jwtSigningKey;
-    final ObjectMapper mapper = new ObjectMapper();
 
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -33,10 +32,10 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        if (userDetails instanceof UserRole customUserDetails) {
+        if (userDetails instanceof MyUser customUserDetails) {
             claims.put("id", customUserDetails.getId());
             claims.put("email", customUserDetails.getEmail());
-            claims.put("role", customUserDetails.getRole());
+            claims.put("roles", customUserDetails.getRoles());
         }
         return generateToken(claims, userDetails);
     }

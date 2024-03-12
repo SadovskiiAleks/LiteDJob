@@ -1,10 +1,11 @@
 package com.example.userrequests.service.adminService.Impl;
 
 import com.example.userrequests.model.request.Request;
-import com.example.userrequests.model.request.UserRole;
+import com.example.userrequests.model.user.MyUser;
 import com.example.userrequests.model.role.Role;
 import com.example.userrequests.model.status.Status;
 import com.example.userrequests.repository.requestRepository.RequestRepository;
+import com.example.userrequests.repository.roleRepository.RoleRepository;
 import com.example.userrequests.repository.userRepository.UserRepository;
 import com.example.userrequests.service.adminService.AdminService;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,12 @@ public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
     private final RequestRepository requestRepository;
+    private final RoleRepository roleRepository;
 
     @Override
-    public ResponseEntity<List<UserRole>> getAllUsers() {
-        List<UserRole> list = userRepository.findAll();
-        ArrayList<UserRole> arrayList = new ArrayList<>();
+    public ResponseEntity<List<MyUser>> getAllUsers() {
+        List<MyUser> list = userRepository.findAll();
+        ArrayList<MyUser> arrayList = new ArrayList<>();
         arrayList.addAll(list);
         return new ResponseEntity<>(arrayList, HttpStatus.OK);
     }
@@ -67,13 +69,13 @@ public class AdminServiceImpl implements AdminService {
         if (sort.equals("asc")) {
             Sort sortSQL = Sort.by(Sort.Order.asc("created"));
             PageRequest pageRequest = PageRequest.of(page.intValue(), 5, sortSQL);
-            Page<Request> arrayList = requestRepository.findAllByStatusNotLikeAndUserRoleUsernameContaining(Status.DRAFT, name, pageRequest);
+            Page<Request> arrayList = requestRepository.findAllByStatusNotLikeAndMyUserUsernameContaining(Status.DRAFT, name, pageRequest);
             return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
         }
         if ((sort.equals("desc"))) {
             Sort sortSQL = Sort.by(Sort.Order.desc("created"));
             PageRequest pageRequest = PageRequest.of(page.intValue(), 5, sortSQL);
-            Page<Request> arrayList = requestRepository.findAllByStatusNotLikeAndUserRoleUsernameContaining(Status.DRAFT, name, pageRequest);
+            Page<Request> arrayList = requestRepository.findAllByStatusNotLikeAndMyUserUsernameContaining(Status.DRAFT, name, pageRequest);
             return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
         } else {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -81,12 +83,22 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ResponseEntity<UserRole> setRoleUser(long id, Role role) {
-        Optional<UserRole> optionalUserRole = userRepository.findById(id);
+    public ResponseEntity<MyUser> setRoleUser(long id, long idRole) {
+        Optional<MyUser> optionalUserRole = userRepository.findById(id);
         if (optionalUserRole.isPresent()) {
             //check role
-            UserRole user = optionalUserRole.get();
-            user.setRole(role);
+            MyUser user = optionalUserRole.get();
+            Optional<Role> optionalRole = roleRepository.findById(idRole);
+            if (optionalRole.isPresent()) {
+                Role role =optionalRole.get();
+                if (user.getRoles().equals(role)){
+                    user.getRoles().remove(role);
+                } else {
+                    user.getRoles().add(role);
+                }
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
             return new ResponseEntity<>(userRepository.save(user), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

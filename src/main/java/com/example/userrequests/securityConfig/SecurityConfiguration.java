@@ -1,7 +1,7 @@
 package com.example.userrequests.securityConfig;
 
 import com.example.userrequests.securityConfig.filter.JwtAuthenticationFilter;
-import com.example.userrequests.service.securityService.UserService;
+import com.example.userrequests.securityConfig.securityService.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

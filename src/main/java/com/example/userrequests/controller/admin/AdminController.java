@@ -1,7 +1,7 @@
 package com.example.userrequests.controller.admin;
 
 import com.example.userrequests.model.request.Request;
-import com.example.userrequests.model.request.UserRole;
+import com.example.userrequests.model.user.MyUser;
 import com.example.userrequests.model.role.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import java.util.List;
 public interface AdminController {
 
     @GetMapping("/users")
-    ResponseEntity<List<UserRole>> getAllUsers();
+    ResponseEntity<List<MyUser>> getAllUsers();
 //
 //    @GetMapping("/users/filter")
 //    ResponseEntity<List<UserRole>> getUsersByName(@RequestBody String name);
@@ -27,5 +27,5 @@ public interface AdminController {
                                                    @RequestBody String name);
 
     @PutMapping("/users/{id}")
-    ResponseEntity<UserRole> setRoleUser(@PathVariable(value = "id") long id, @RequestBody Role role);
+    ResponseEntity<MyUser> setRoleUser(@PathVariable(value = "id") long id, @RequestBody long idRole);
 }

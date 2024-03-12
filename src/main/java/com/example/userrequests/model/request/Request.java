@@ -1,5 +1,6 @@
 package com.example.userrequests.model.request;
 
+import com.example.userrequests.model.user.MyUser;
 import com.example.userrequests.model.status.Status;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -29,5 +30,5 @@ public class Request {
 
 
     @ManyToOne(fetch = FetchType.EAGER)
-    private UserRole userRole;
+    private MyUser myUser;
 }

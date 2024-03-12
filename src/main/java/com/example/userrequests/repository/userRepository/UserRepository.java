@@ -1,18 +1,16 @@
 package com.example.userrequests.repository.userRepository;
 
-import com.example.userrequests.model.request.UserRole;
+import com.example.userrequests.model.user.MyUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserRole,Long> {
-    //List<UserRole> findByUsername(String username);
+public interface UserRepository extends JpaRepository<MyUser,Long> {
 
-    Optional<UserRole> findByUsername(String username);
+    Optional<MyUser> findByUsername(String username);
 
     boolean existsByUsername(String username);
 

@@ -1,13 +1,13 @@
 package com.example.userrequests.service.userService.impl;
 
 import com.example.userrequests.model.request.Request;
-import com.example.userrequests.model.request.UserRole;
+import com.example.userrequests.model.user.MyUser;
 import com.example.userrequests.model.status.Status;
 import com.example.userrequests.repository.requestRepository.RequestRepository;
 import com.example.userrequests.repository.userRepository.UserRepository;
-import com.example.userrequests.service.securityService.JwtService;
+import com.example.userrequests.securityConfig.securityService.JwtService;
 import com.example.userrequests.service.userService.UserService;
-import lombok.Data;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,10 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     public static final String BEARER_PREFIX = "Bearer ";
@@ -33,11 +33,11 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<Request> createNewRequest(Request request, String authentication) {
         String token = authentication.substring(BEARER_PREFIX.length());
         Long userId = jwtService.getUserId(token);
-        Optional<UserRole> userRoleOptional = userRepository.findById(userId);
+        Optional<MyUser> userRoleOptional = userRepository.findById(userId);
         if (userRoleOptional.isPresent()) {
-            UserRole userRole = userRoleOptional.get();
+            MyUser myUser = userRoleOptional.get();
             request.setCreated(new Date());
-            request.setUserRole(userRole);
+            request.setMyUser(myUser);
             request.setStatus(Status.SEND);
             Request newRequest = requestRepository.save(request);
             return new ResponseEntity<>(newRequest, HttpStatus.CREATED);
@@ -50,12 +50,12 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<Request> createNewDraft(Request request, String authentication) {
         String token = authentication.substring(BEARER_PREFIX.length());
         Long userId = jwtService.getUserId(token);
-        Optional<UserRole> userRoleOptional = userRepository.findById(userId);
+        Optional<MyUser> userRoleOptional = userRepository.findById(userId);
         if (userRoleOptional.isPresent()) {
-            UserRole userRole = userRoleOptional.get();
-            if (userRole != null) {
+            MyUser myUser = userRoleOptional.get();
+            if (myUser != null) {
                 request.setCreated(new Date());
-                request.setUserRole(userRole);
+                request.setMyUser(myUser);
                 request.setStatus(Status.DRAFT);
                 Request newRequest = requestRepository.save(request);
                 return new ResponseEntity<>(newRequest, HttpStatus.CREATED);
@@ -73,7 +73,7 @@ public class UserServiceImpl implements UserService {
         Optional<Request> optionalRequest = requestRepository.findById(id);
         if (optionalRequest.isPresent()) {
             Request request = optionalRequest.get();
-            if (request != null && request.getStatus().equals(Status.DRAFT) && request.getUserRole().getId().equals(userId)) {
+            if (request != null && request.getStatus().equals(Status.DRAFT) && request.getMyUser().getId().equals(userId)) {
                 request.setStatus(Status.SEND);
                 requestRepository.save(request);
                 return ResponseEntity.ok().build();
@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
         Optional<Request> optionalRequest = requestRepository.findById(id);
         if (optionalRequest.isPresent()) {
             Request requestOfRepository = optionalRequest.get();
-            if (requestOfRepository.getStatus().equals(Status.DRAFT) && requestOfRepository.getUserRole().getId().equals(userId)) {
+            if (requestOfRepository.getStatus().equals(Status.DRAFT) && requestOfRepository.getMyUser().getId().equals(userId)) {
                 requestOfRepository.setFullText(request.getFullText());
                 requestRepository.save(requestOfRepository);
                 return ResponseEntity.ok().build();
@@ -107,19 +107,19 @@ public class UserServiceImpl implements UserService {
         page = page - 1;
         String token = authentication.substring(BEARER_PREFIX.length());
         Long userId = jwtService.getUserId(token);
-        Optional<UserRole> userRoleOptional = userRepository.findById(userId);
+        Optional<MyUser> userRoleOptional = userRepository.findById(userId);
         if (userRoleOptional.isPresent()) {
-            UserRole userRole = userRoleOptional.get();
+            MyUser myUser = userRoleOptional.get();
             if (sort.equals("asc")) {
                 Sort sortSQL = Sort.by(Sort.Order.asc("created"));
                 PageRequest pageRequest = PageRequest.of(page.intValue(), 5, sortSQL);
-                Page<Request> arrayList = requestRepository.findAllByUserRoleId(userRole.getId(), pageRequest);
+                Page<Request> arrayList = requestRepository.findAllByMyUserId(myUser.getId(), pageRequest);
                 return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
             }
             if ((sort.equals("desc"))) {
                 Sort sortSQL = Sort.by(Sort.Order.desc("created"));
                 PageRequest pageRequest = PageRequest.of(page.intValue(), 5, sortSQL);
-                Page<Request> arrayList = requestRepository.findAllByUserRoleId(userRole.getId(), pageRequest);
+                Page<Request> arrayList = requestRepository.findAllByMyUserId(myUser.getId(), pageRequest);
                 return new ResponseEntity<>(arrayList, HttpStatus.FOUND);
             } else {
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

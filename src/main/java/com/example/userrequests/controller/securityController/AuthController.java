@@ -3,7 +3,7 @@ package com.example.userrequests.controller.securityController;
 import com.example.userrequests.DTO.authorization.Authentication;
 import com.example.userrequests.DTO.authorization.Authorization;
 import com.example.userrequests.DTO.authorization.JwtAuthenticationResponse;
-import com.example.userrequests.service.securityService.AuthenticationService;
+import com.example.userrequests.securityConfig.securityService.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
